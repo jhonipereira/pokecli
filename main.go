@@ -1,40 +1,23 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
+	"time"
+
+	"github.com/jhonipereira/pokecli/internal/api"
 )
 
-type cliCommand struct {
-	name        string
-	description string
-	callback    func() error
-}
-
-func getCommands() map[string]cliCommand {
-	return map[string]cliCommand{
-		"help": {
-			name:        "help",
-			description: "Displays a help message",
-			callback:    nil,
-		},
-		"exit": {
-			name:        "exit",
-			description: "Exit the Pokedex",
-			callback:    nil,
-		},
-	}
+type config struct {
+	apiClient       api.Client
+	nextLocationURL *string
+	prevLocationURL *string
+	caughtPokemon   map[string]api.Pokemon
 }
 
 func main() {
-	for {
-		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter your command: ")
-		cmd, _ := reader.ReadString('\n')
-		fmt.Print("Your command was " + cmd)
-		if cmd == "help" {
-			getCommands()
-		}
+	cfg := config{
+		apiClient:     api.NewClient(time.Hour),
+		caughtPokemon: make(map[string]api.Pokemon),
 	}
+
+	repl(&cfg)
 }
